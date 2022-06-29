@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Parking booking management</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h3 style="text-align: center">Parking booking management</h3>
+    {% if bookings|length < 1 %} <h4 style="text-align: center">No bookings have been made.</h4>
+        {% else %}
+        <table>
+            <tr>
+                <th>Spot Number</th>
+                <th>License Plate</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Added</th>
+                <th>Actions</th>
+            </tr>
+            {% for booking in bookings %}
+            <tr>
+                <td class="booking">{{ booking.spot_number }}</td>
+                <td>{{ booking.license_plate }}</td>
+                <td>{{ booking.start }}</td>
+                <td>{{ booking.end }}</td>
+                <td>{{ booking.date_created.date() }}</td>
+                <td>
+                    <a href="/delete/{{booking.id}}">Delete</a>
+                    <br>
+                    <a href="/update/{{booking.id}}">Update</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <div class="form">
+            <h2>Make new booking</h2>
+            <form action="/" method="POST">
+                <select type="text" name="spot_number" id="spot_number" placeholder="Spot Number">                
+                    <option disabled value="Spot Number">Spot Number</option>
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="A3">A3</option>
+                    <option value="A4">A4</option>
+                    <option value="A5">A5</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="B3">B3</option>
+                    <option value="B4">B4</option>
+                    <option value="B5">B5</option>
+                </select>
+                <input type="text" name="license_plate" id="license_plate" placeholder="License Plate" required>
+                <input type="datetime-local" name="start" id="start" placeholder="Start" required>
+                <input type="datetime-local" name="end" id="end" placeholder="End" required>
+                <input type="submit" value="Add" style='font-weight: bold;'>
+            </form>
+        </div>
+</div>
+{% endblock %}

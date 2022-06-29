@@ -1,0 +1,43 @@
+body, html {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: rgb(170, 175, 173);
+}
+
+.content {
+    margin: auto;
+    text-align: center;  
+}
+
+table, td, th {
+    border: 1px solid rgb(252, 239, 239);
+}
+
+table {
+    border-collapse: collapse;
+    margin: auto;
+    text-align: center;
+}
+
+th {
+    height: 30px;
+    width: 100px;
+}
+
+td {
+    text-align: center;
+    padding: 5px;
+}
+
+.form {
+    margin-top: 10px;
+}
+
+input {
+    padding:7 px;
+    width: 100px;
+}
+
+.item:hover {
+    color: blueviolet;
+}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Update parking booking</title>
+{% endblock %}
+
+{% block body %}
+<div class='content'>
+    <h1 style='text-align: center'>Update Booking </h1>
+
+    <div class='form'>
+        <form action='/update/{{booking.id}}' method='POST'>
+
+            <select type="text" name="spot_number" id="spot_number" placeholder="Spot Number" value='{{booking.spot_number}}'>
+            <option disabled value="Spot Number">Spot Number</option>
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="A3">A3</option>
+                    <option value="A4">A4</option>
+                    <option value="A5">A5</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="B3">B3</option>
+                    <option value="B4">B4</option>
+                    <option value="B5">B5</option>
+            </select>        
+            <input type="text" name="license_plate" id="license_plate" placeholder="License Plate" required value='{{booking.license_plate}}'>
+            <input type="datetime-local" name="start" id="start" placeholder="Start" required value='{{booking.start}}'>
+            <input type="datetime-local" name="end" id="end" placeholder="End" required value='{{booking.end}}'>
+            <input type='submit' value='Update'>
+        </form>
+    </div>
+</div>
+{% endblock %}
