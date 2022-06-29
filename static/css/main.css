@@ -1,5 +1,5 @@
 body, html {
-    margin: 0;
+    margin: 20px;
     font-family: sans-serif;
     background-color: rgb(170, 175, 173);
 }
@@ -33,11 +33,14 @@ td {
     margin-top: 10px;
 }
 
-input {
+.form > {
     padding:7 px;
     width: 100px;
 }
-
-.item:hover {
-    color: blueviolet;
+select {
+    padding:7 px;
+    width: 100px; 
+}
+td:hover {
+    color: rgb(226, 43, 43);
 }

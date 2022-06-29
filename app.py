@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -25,7 +24,7 @@ class Parking(db.Model):
 def index():
     if request.method == 'POST':
         booking_spot_number = request.form['spot_number']
-        booking_license_plate = request.form['license_plate']          
+        booking_license_plate = request.form['license_plate'].upper()          
         booking_start = datetime(*[int(v) for v in request.form['start'].replace('T', '-').replace(':', '-').split('-')])
         booking_end = datetime(*[int(v) for v in request.form['end'].replace('T', '-').replace(':', '-').split('-')])    
 
@@ -45,14 +44,12 @@ def index():
 @app.route('/delete/<int:id>')
 
 def delete(id):
-    item_to_delete = Parking.query.get_or_404(id)
-
-    try:
-        db.session.delete(item_to_delete)
-        db.session.commit()
-        return redirect('/')
-    except:
-        return 'There was a problem deleting that item'
+    item_to_delete = Parking.query.get_or_404(id)    
+    db.session.delete(item_to_delete)
+    db.session.commit()
+    flash('Your booking has been removed', category='success')
+    
+    return redirect('/')
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
