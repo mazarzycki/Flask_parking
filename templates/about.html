@@ -3,3 +3,7 @@
 {% block body %}
 
 {% endblock %}
+
+
+db.session.query(db.exists().where((Parking.spot_number == booking_spot_number) and (Parking.start > booking_start and Parking.start < booking_end)))
+

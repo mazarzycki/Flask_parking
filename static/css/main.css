@@ -1,11 +1,11 @@
 body, html {
-    margin: 20px;
+    margin: 0;
     font-family: sans-serif;
     background-color: rgb(170, 175, 173);
 }
 
 .content {
-    margin: auto;
+    margin-top: 4%;
     text-align: center;  
 }
 
