@@ -7,6 +7,7 @@
 {% block body %}
 <div class="content">
     <h3 style="text-align: center">Parking booking management</h3>
+    <div id="time"> It is {{ time_now }}. {{free_spots}} spots out of 10 are free at this moment. </div>
     {% if bookings|length < 1 %} <h4 style="text-align: center">No bookings have been made.</h4>
         {% else %}
         <table>
@@ -34,7 +35,7 @@
             {% endfor %}
         </table>
         {% endif %}
-
+        
         <div class="form">
             <h2>Make new booking</h2>
             <form action="/" method="POST">
