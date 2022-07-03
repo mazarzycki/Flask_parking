@@ -1,9 +1,10 @@
-from operator import and_, or_
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+import pandas as pd
+import numpy as np
 
-from pyparsing import And
+
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'memcached'
@@ -26,31 +27,49 @@ class Parking(db.Model):
         return '<Parking %r>' % self.id
 
 
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    
+    
+
     if request.method == 'POST':
         booking_spot_number = str(request.form['spot_number'])
         booking_license_plate = str(request.form['license_plate'].replace(' ', '').upper())          
         booking_start = datetime(*[int(v) for v in request.form['start'].replace('T', '-').replace(':', '-').split('-')])
-        booking_end = datetime(*[int(v) for v in request.form['end'].replace('T', '-').replace(':', '-').split('-')])    
-     
+        booking_end = datetime(*[int(v) for v in request.form['end'].replace('T', '-').replace(':', '-').split('-')])
+
+        df = pd.read_sql('parking', 'sqlite:///parking_booking.db')
+        
+        df['start'] = pd.to_datetime(df['start'])
+        df['end'] = pd.to_datetime(df['end'])
+
+        license_plate_check = np.where((df['license_plate'] == booking_license_plate) & (((df['start'] <= booking_start) & (df['end'] >= booking_start) | ((df['end'] >= booking_end) & (df['start'] <= booking_end))) | ((booking_start <= df['start']) & (booking_end >= df['end']))))
+        spot_reserve_check = np.where((df['spot_number'] == booking_spot_number) & (((df['start'] <= booking_start) & (df['end'] >= booking_start) | ((df['end'] >= booking_end) & (df['start'] <= booking_end))) | ((booking_start <= df['start']) & (booking_end >= df['end']))))
+        print(license_plate_check)
+        print(spot_reserve_check)
+
         if booking_end < booking_start:
             flash('End time has to be later than start time', category='error')
+        elif booking_start < datetime.now():
+            flash('Start time can''t be in the past.', category='error') 
+          
         elif (booking_end - booking_start) < timedelta(minutes=10):
             flash('Minimum booking time is 10 minutes.', category='error') 
+        
+        elif np.size(license_plate_check) != 0:
+            flash(f'A car with license plate {booking_license_plate} has already booked a spot during selected time.', category='error' )
 
-
-        elif db.session.query(db.exists().where(Parking.spot_number == booking_spot_number)).scalar() and ((db.session.query(db.exists().where(Parking.start > booking_start)).scalar() and db.session.query(db.exists().where(Parking.start < booking_end)).scalar()) or (db.session.query(db.exists().where(Parking.end > booking_start)).scalar() and db.session.query(db.exists().where(Parking.end < booking_end)).scalar())):
-            flash(f'Spot {booking_spot_number} has already been booked for the selected time. Choose another parking spot or different time.', category='error' )    
-
-        elif db.session.query(db.exists().where(Parking.license_plate == booking_license_plate)).scalar() and ((db.session.query(db.exists().where(Parking.start > booking_start)).scalar() and db.session.query(db.exists().where(Parking.start < booking_end)).scalar()) or (db.session.query(db.exists().where(Parking.end > booking_start)).scalar() and db.session.query(db.exists().where(Parking.end < booking_end)).scalar())):
-            flash(f'Car with a license plate {booking_license_plate} has already been booked for the selected time on another parking spot.', category='error' )    
+        elif np.size(spot_reserve_check) != 0:
+            flash(f'The spot {booking_spot_number} has been booked during selected period.', category='error' )
 
         else:
             new_booking = Parking(spot_number = booking_spot_number, license_plate = booking_license_plate, start = booking_start, end = booking_end)
             db.session.add(new_booking)
             db.session.commit()
+            print(df)
             flash('New booking has been added', category='success')
+             
     
     bookings = Parking.query.order_by(Parking.start.asc()).all()
     return render_template('index.html', bookings = bookings)
@@ -77,6 +96,10 @@ def update(id):
 
         if booking.end < booking.start:
             flash('End time has to be later than start time', category='error')
+        elif (booking.end - booking.start) < timedelta(minutes=10):
+            flash('Minimum booking time is 10 minutes.', category='error') 
+        
+          
         else:
             db.session.commit() 
             flash('Your booking has been updated', category='success')    

@@ -4,6 +4,36 @@
 
 {% endblock %}
 
+elif db.session.query(db.exists().where(Parking.license_plate == booking_license_plate)).scalar() and ((db.session.query(db.exists().where(Parking.start > booking_start)).scalar() and db.session.query(db.exists().where(Parking.start < booking_end)).scalar()) or (db.session.query(db.exists().where(Parking.end > booking_start)).scalar() and db.session.query(db.exists().where(Parking.end < booking_end)).scalar())):
+            flash(f'Car with a license plate {booking_license_plate} has already been booked for the selected time on another parking spot.', category='error' )    
+            
+            
+            db.session.query(db.exists().where(Parking.spot_number == booking_spot_number)).scalar() and 
+            ((db.session.query(db.exists().where(Parking.start <= booking_start)).scalar() and 
+            db.session.query(db.exists().where(Parking.start <= booking_end)).scalar()) or 
+            (db.session.query(db.exists().where(Parking.end >= booking_start)).scalar() and 
+            db.session.query(db.exists().where(Parking.end <= booking_end)).scalar())):
 
-db.session.query(db.exists().where((Parking.spot_number == booking_spot_number) and (Parking.start > booking_start and Parking.start < booking_end)))
 
+elif db.session.query(db.exists().where(Parking.license_plate == booking_license_plate)).scalar() and ((db.session.query(db.exists().where(Parking.start <= booking_start)).scalar() and db.session.query(db.exists().where(Parking.start <= booking_end)).scalar()) or (db.session.query(db.exists().where(Parking.end >= booking_start)).scalar() and db.session.query(db.exists().where(Parking.end <= booking_end)).scalar())):
+flash(f'A car with license plate {booking_license_plate} has booked another spot for selected time.', category='error' )      
+
+
+db.session.query(db.exists().where(or_(and_(Parking.spot_number == booking_spot_number), and_(Parking.start <= booking_start, Parking.end >= booking_start), and_(Parking.start <= booking_end, Parking.end >= booking_end))))
+
+
+plate_with_booking = Parking.query.filter((Parking.license_plate == booking_license_plate) & (((Parking.start <= booking_start) & (Parking.start <= booking_end)) | ((Parking.end >= booking_start) & (Parking.end <= booking_end))))
+        
+        spot_taken = Parking.query.filter((Parking.spot_number == booking_spot_number) & (((Parking.start <= booking_start) & (Parking.start <= booking_end)) | ((Parking.end >= booking_start) & (Parking.end <= booking_end))))           
+        
+        query_spots = Parking.query.filter(booking_spot_number == Parking.spot_number)
+      
+        print(booking_spot_number)
+        print(plate_with_booking)
+
+
+        elif spot_taken:
+        flash(f'Spot {booking_spot_number} has already been booked for the selected time. Choose another parking spot or different time.', category='error' )  
+
+    elif plate_with_booking:
+        flash(f'A car with license plate {booking_license_plate} has booked another spot for selected time.', category='error' )
