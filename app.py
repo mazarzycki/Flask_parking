@@ -72,11 +72,11 @@ def index():
         message = R.validate(df)
         if not message == '':
             flash(message, category='error')
-        elif np.size(license_plate_check) > 0:
+        elif np.size(license_plate_check) != 0:
             
             flash(f'A car with license plate {R.license_plate} has already booked a spot during selected time.', category='error' )
 
-        elif np.size(spot_reserve_check) > 0:
+        elif np.size(spot_reserve_check) != 0:
             
             flash(f'The spot {R.spot_number} has been booked during selected period.', category='error' )
         else:
