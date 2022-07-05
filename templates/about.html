@@ -1,54 +1,39 @@
 {% extends 'base.html' %}
 
 {% block body %}
+    <p class="about">
+<h3> Parking spot reservation management </h3>
 
+This repo has been updated to work with `Python v3.8` and up.
+Requirements:
+<ul> 
+    <li>Flask</li>
+    <li>Flask SQLAlchemy</li>
+    <li>datetime</li>
+    <li>pandas</li>
+    <li>numpy</li>
+</ul>
+ 
+
+<ol>
+    <li> The purpose of this app is to enable management of parking spots. The data is stored in sqlite database. The app was written in Flask. </li>
+
+    <li> This server will start on port 5000 by default. You can change this in `app.py` by changing the following line to this: </li>
+    <br>    
+    ```python
+    if __name__ == '__main__': <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;app.run(debug=True, port=<desired port>) 
+    ```
+    <br>
+    <li> To create a new booking there are 4 inputs to be filled: 1. desired spot number, 2. license plate of the car, 3. booking starting date and time, 4. booking end date and time. </li>
+    
+    <li>After being created a booking can be removed or updated.  </li>
+    
+    <li>There are 5 situations when a booking can't be created and a message will be displayed on the screen: <br> 1. booking end time is earlier than booking start time, 2. booking start time is in the past, 3. desired booking period is shorter than 10 minutes, 4. desired spot has already been booked either for whole desired period or for part of it, 5. there is another reservation for inserted license plate for whole desired period or for part of it. <br> For now scenarios 4 and 5 only work for creation of new bookings. They don't work for updates. </li>
+    
+    <li> Number of free spots in a given moment is displayed on the screen above the list of bookings. </li>
+</ol>
+
+    </p>
 {% endblock %}
 
-elif db.session.query(db.exists().where(Parking.license_plate == booking_license_plate)).scalar() and ((db.session.query(db.exists().where(Parking.start > booking_start)).scalar() and db.session.query(db.exists().where(Parking.start < booking_end)).scalar()) or (db.session.query(db.exists().where(Parking.end > booking_start)).scalar() and db.session.query(db.exists().where(Parking.end < booking_end)).scalar())):
-            flash(f'Car with a license plate {booking_license_plate} has already been booked for the selected time on another parking spot.', category='error' )    
-            
-            
-            db.session.query(db.exists().where(Parking.spot_number == booking_spot_number)).scalar() and 
-            ((db.session.query(db.exists().where(Parking.start <= booking_start)).scalar() and 
-            db.session.query(db.exists().where(Parking.start <= booking_end)).scalar()) or 
-            (db.session.query(db.exists().where(Parking.end >= booking_start)).scalar() and 
-            db.session.query(db.exists().where(Parking.end <= booking_end)).scalar())):
-
-
-elif db.session.query(db.exists().where(Parking.license_plate == booking_license_plate)).scalar() and ((db.session.query(db.exists().where(Parking.start <= booking_start)).scalar() and db.session.query(db.exists().where(Parking.start <= booking_end)).scalar()) or (db.session.query(db.exists().where(Parking.end >= booking_start)).scalar() and db.session.query(db.exists().where(Parking.end <= booking_end)).scalar())):
-flash(f'A car with license plate {booking_license_plate} has booked another spot for selected time.', category='error' )      
-
-
-db.session.query(db.exists().where(or_(and_(Parking.spot_number == booking_spot_number), and_(Parking.start <= booking_start, Parking.end >= booking_start), and_(Parking.start <= booking_end, Parking.end >= booking_end))))
-
-
-plate_with_booking = Parking.query.filter((Parking.license_plate == booking_license_plate) & (((Parking.start <= booking_start) & (Parking.start <= booking_end)) | ((Parking.end >= booking_start) & (Parking.end <= booking_end))))
-        
-        spot_taken = Parking.query.filter((Parking.spot_number == booking_spot_number) & (((Parking.start <= booking_start) & (Parking.start <= booking_end)) | ((Parking.end >= booking_start) & (Parking.end <= booking_end))))           
-        
-        query_spots = Parking.query.filter(booking_spot_number == Parking.spot_number)
-      
-        print(booking_spot_number)
-        print(plate_with_booking)
-
-
-        elif spot_taken:
-        flash(f'Spot {booking_spot_number} has already been booked for the selected time. Choose another parking spot or different time.', category='error' )  
-
-    elif plate_with_booking:
-        flash(f'A car with license plate {booking_license_plate} has booked another spot for selected time.', category='error' )
-
-
-        R = Reservation(str(request.form['spot_number']), str(request.form['license_plate'].replace(' ', '').upper()), datetime(*[int(v) for v in request.form['start'].replace('T', '-').replace(':', '-').split('-')]), datetime(*[int(v) for v in request.form['end'].replace('T', '-').replace(':', '-').split('-')]))
-         
-
-        license_plate_check = np.where((df['license_plate'] == R.license_plate) & (((df['start'] <= R.start) & (df['end'] >= R.start) | ((df['end'] >= R.end) & (df['start'] <= R.end))) | ((R.start <= df['start']) & (R.end >= df['end']))))
-        spot_reserve_check = np.where((df['spot_number'] == R.spot_number) & (((df['start'] <= R.start) & (df['end'] >= R.start) | ((df['end'] >= R.end) & (df['start'] <= R.end))) | ((R.start <= df['start']) & (R.end >= df['end']))))
-
-
-        class Reservation:
-    def __init__(self, spot_number, license_plate, start, end):
-        self.spot_number = spot_number
-        self.license_plate = license_plate
-        self.start = start 
-        self.end = end
