@@ -24,3 +24,10 @@ if __name__ == '__main__':
 5. There are 5 situations when a booking can't be created and a message will be displayed on the screen: 1. booking end time is earlier than booking start time, 2. booking start time is in the past, 3. desired booking period is shorter than 10 minutes, 4. desired spot has already been booked either for whole desired period or for part of it, 5. there is another reservation for inserted license plate for whole desired period or for part of it. For now scenarios 4 and 5 only work for creation of new bookings. They don't work for updates. 
 
 6. Number of free spots in a given moment is displayed on the screen above the list of bookings.
+
+Further steps:
+1. Remove resending the inserted information when the page reloads.
+2. Create a real time occupation rate management. 
+3. Add a double booking prevention for an update part.
+4. Create an option to login a user.
+5. Improve the frontend part, make it more user friendly.
