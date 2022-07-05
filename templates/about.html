@@ -37,3 +37,18 @@ plate_with_booking = Parking.query.filter((Parking.license_plate == booking_lice
 
     elif plate_with_booking:
         flash(f'A car with license plate {booking_license_plate} has booked another spot for selected time.', category='error' )
+
+
+        R = Reservation(str(request.form['spot_number']), str(request.form['license_plate'].replace(' ', '').upper()), datetime(*[int(v) for v in request.form['start'].replace('T', '-').replace(':', '-').split('-')]), datetime(*[int(v) for v in request.form['end'].replace('T', '-').replace(':', '-').split('-')]))
+         
+
+        license_plate_check = np.where((df['license_plate'] == R.license_plate) & (((df['start'] <= R.start) & (df['end'] >= R.start) | ((df['end'] >= R.end) & (df['start'] <= R.end))) | ((R.start <= df['start']) & (R.end >= df['end']))))
+        spot_reserve_check = np.where((df['spot_number'] == R.spot_number) & (((df['start'] <= R.start) & (df['end'] >= R.start) | ((df['end'] >= R.end) & (df['start'] <= R.end))) | ((R.start <= df['start']) & (R.end >= df['end']))))
+
+
+        class Reservation:
+    def __init__(self, spot_number, license_plate, start, end):
+        self.spot_number = spot_number
+        self.license_plate = license_plate
+        self.start = start 
+        self.end = end
